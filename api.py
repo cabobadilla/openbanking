@@ -106,4 +106,3 @@ st.write("Usa herramientas como Postman para probar las APIs con tu API Key.")
 
 # Montar la aplicación FastAPI
 st_server = WSGIMiddleware(app)
-st.experimental_rerun()
