@@ -27,7 +27,12 @@ ORDERS = [
 ]
 
 # API Key para autenticación
-API_KEYS = {"demo_key": "12345"}  # Puedes agregar más claves si es necesario
+def get_api_keys():
+    # Leer las claves de los secretos en Streamlit Cloud
+    secrets = st.secrets["api_keys"]
+    return secrets
+
+API_KEYS = get_api_keys()
 
 # FastAPI para manejar las APIs
 app = FastAPI()
@@ -75,15 +80,19 @@ st.title("API Endpoint App with API Key Authentication")
 
 # Middleware para usar FastAPI en Streamlit
 st.write("Esta aplicación expone varias APIs con autenticación de API Keys.")
-st.code("Claves actuales configuradas: \n" + "\n".join(API_KEYS.keys()))
+st.write("Configura tus claves en los secretos de Streamlit Cloud en el formato:")
+st.code("""
+[api_keys]
+demo_key = "12345"
+""")
 
 def generate_random_key():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
 if st.button("Generar nueva API Key"):
     new_key = generate_random_key()
-    API_KEYS[f"key_{len(API_KEYS)+1}"] = new_key
-    st.success(f"Nueva API Key generada: {new_key}")
+    st.write("Agrega esta clave en los secretos de Streamlit Cloud para usarla:")
+    st.code(new_key)
 
 st.text("Puedes consultar los endpoints:")
 st.code("/users", language="http")
@@ -97,3 +106,4 @@ st.write("Usa herramientas como Postman para probar las APIs con tu API Key.")
 
 # Montar la aplicación FastAPI
 st_server = WSGIMiddleware(app)
+st.experimental_rerun()
